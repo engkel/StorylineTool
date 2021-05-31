@@ -12,35 +12,16 @@ public class Main extends Application {
     }
 
     static GridPane menuPane;
-    static BorderPane storylinePane = new BorderPane();
-
     static Scene menuScene;
-    static Scene storylineScene;
-
     static Stage primaryStage;
 
     static LinkedList<Note> notes = new LinkedList<Note>();
 
+    // Stores the user mode, false = single user (file), true = multi user (database)
+    static boolean userMode;
+
     @Override
     public void start(Stage stage) throws Exception {
-        // Testing Notes, Remove once UI functionality works
-        //notes.add(new Note("My first note.", 2, 1));
-        //notes.add(new Note("My 2nd note.", 4, 1));
-        //notes.add(new Note("My third note.", 4, 2));
-        //notes.add(new Note("My test note.", 6, 2));
-        //notes.add(new Note("My 12345 note.", 8, 1));
-        //notes.add(new Note("My 12345 note.", 10, 3));
-        //notes.add(new Note("My 12345 note.", 12, 3));
-        //notes.add(new Note("My 12345 note.", 12, 1));
-        //notes.add(new Note("My 12345 note.", 14, 1));
-        //notes.add(new Note("My 12345 note.", 14, 4));
-        //notes.add(new Note("My 12345 note.", 16, 3));
-        //notes.add(new Note("My 12345 note.", 16, 4));
-        //notes.add(new Note("My 12345 note.", 18, 2));
-        //notes.add(new Note("My 12345 note.", 18, 3));
-        //notes.add(new Note("My 12345 note.", 20, 1));
-        //notes.add(new Note("My 12345 note.", 20, 2));
-
         // Create a reference to the primary stage
         // This allows changing the scene from other classes
         primaryStage = stage;

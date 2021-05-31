@@ -9,9 +9,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import java.io.IOException;
 
 public class UI {
-    public static StackPane timelineStack = new StackPane();
     public static GridPane timelineGrid = new GridPane();
 
     static private TextArea noteTextArea;
@@ -64,19 +64,33 @@ public class UI {
         GridPane.setMargin(multiUserBtn, new Insets(0, 0, 0, 10));
 
         // Clicked event for the "Single User" button
-        singleUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        singleUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
             @Override
             public void handle(MouseEvent e) {
                 System.out.println("Single User Mode was clicked!");
+                // Set the userMode to false (Single User Mode)
+                Main.userMode = false;
+                try {
+                    // Add all notes from the project.dat file into the notes LinkedList
+                    Storage.loadFromFile();
+                } catch (IOException ioException) {
+                    System.out.println("An error occurred when trying to load data from the project.dat file.");
+                    ioException.printStackTrace();
+                }
+                // Generate the program UI (Without the notes)
                 generateProgram();
+                // Show all notes from the notes LinkedList in the Timeline
+                updateTimeline();
             }
         });
 
         // Clicked event for the "Multi User" button
-        multiUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        multiUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
             @Override
             public void handle(MouseEvent e) {
-                System.out.println("Single User Mode was clicked!");
+                System.out.println("Multi User Mode was clicked!");
+                Main.userMode = true;
+                generateProgram();
             }
         });
 
@@ -108,8 +122,6 @@ public class UI {
         programPane.add(timelinePane, 0, 0);
 
         // Timeline Stack, All nodes are added to this Stackpane!
-        //timelineStack = new StackPane();
-        //timelinePane.setContent(timelineStack);
         timelineGrid = new GridPane();
         timelineGrid.setVgap(10);
         timelineGrid.setHgap(10);
@@ -160,8 +172,6 @@ public class UI {
 
 
 
-
-
         // Add the "Add Note" Button
         HBox addNoteBox = new HBox();
         Button addNoteBtn = new Button("Add Note");
@@ -188,28 +198,39 @@ public class UI {
         deleteProjectBtn.setPrefHeight(24);
         deleteProjectBtn.setPrefWidth(130);
         deleteProjectBtn.setBackground(new Background(new BackgroundFill(Color.rgb(250, 110, 110), CornerRadii.EMPTY, Insets.EMPTY)));
-        saveOptionsBox.setMargin(deleteProjectBtn, new Insets(10, 10, 5, 10));
-        Button saveProjectBtn = new Button("Save to Database");
+        VBox.setMargin(deleteProjectBtn, new Insets(10, 10, 5, 10));
+        Button saveProjectBtn = new Button("Save to " + (Main.userMode ? "Database" : "File"));
         saveProjectBtn.setFont(new Font("Arial", 14));
         saveProjectBtn.setPrefHeight(70);
         saveProjectBtn.setPrefWidth(130);
         saveProjectBtn.setBackground(new Background(new BackgroundFill(Color.rgb(90, 200, 90), CornerRadii.EMPTY, Insets.EMPTY)));
-        saveOptionsBox.setMargin(saveProjectBtn, new Insets(0, 10, 10, 10));
+        VBox.setMargin(saveProjectBtn, new Insets(0, 10, 10, 10));
         saveOptionsBox.getChildren().addAll(deleteProjectBtn, saveProjectBtn);
 
+        // Add the MOUSE_CLICKED event to the save button
+        saveProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent e) {
+                if (Main.userMode) {
+                    Storage.saveToDatabase();
+                    return;
+                }
+
+                Storage.saveToFile();
+            }
+        });
 
 
         // Add note tools (Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
         controlsPane.getChildren().addAll(noteTextAreaBox, noteOtherPane, hregion, saveOptionsBox);
         // top, right, bottom, left
-        controlsPane.setMargin(noteTextAreaBox, new Insets(10, 10, 10, 10));
-        controlsPane.setMargin(noteOtherPane, new Insets(10, 0, 10, 0));
+        HBox.setMargin(noteTextAreaBox, new Insets(10, 10, 10, 10));
+        HBox.setMargin(noteOtherPane, new Insets(10, 0, 10, 0));
         HBox.setHgrow(hregion, Priority.ALWAYS);
 
 
-
         // Clicked event for the "Add Note" button
-        addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
             @Override
             public void handle(MouseEvent e) {
                 //System.out.println("Add Note Button was Clicked!");
@@ -234,11 +255,6 @@ public class UI {
 
                 // Add the note to the timeline!
                 Note.addNoteToLinkedList(noteText, noteOrder, noteRow);
-
-                // Print list of notes:
-                for (Note n : Main.notes) {
-                    System.out.println("Note, text: \"" + n.text + "\", order: " + n.order + ", row:" + n.row);
-                }
 
                 // Update the timeline to show the updated data.
                 timelineGrid.getChildren().removeAll(timelineGrid.getChildren());
@@ -266,7 +282,7 @@ public class UI {
 
             // Add all the labels and the region
             noteBox.getChildren().addAll(noteText, spacer, noteInfo);
-            noteBox.setVgrow(spacer, Priority.ALWAYS);
+            VBox.setVgrow(spacer, Priority.ALWAYS);
 
             // Change the color of the notes to a yellow color
             noteBox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 120), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -277,7 +293,6 @@ public class UI {
 
             // Set the position of the note in the grid
             timelineGrid.add(noteBox, x, y);
-
         }
     }
 }
