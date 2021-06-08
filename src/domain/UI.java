@@ -1,3 +1,8 @@
+package domain;
+
+import domain.strategy.MultiUserSaveStrategy;
+import domain.strategy.SaveStrategy;
+import domain.strategy.SingleUserSaveStrategy;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -17,6 +22,7 @@ public class UI {
     static private TextArea noteTextArea;
     static private TextField orderField;
     static private TextField rowField;
+    private static SaveStrategy saveStrategy;
 
     public static GridPane initStartMenu() {
         GridPane menuPane = new GridPane();
@@ -31,7 +37,7 @@ public class UI {
         menuPane.getColumnConstraints().addAll(columnWidth, columnWidth);
         menuPane.getRowConstraints().addAll(rowHeight, rowHeight);
 
-        // Declare and instantiate all UI elements
+        // Declare and instantiate all domain.UI elements
         Label title = new Label("Storyline Tool");
         Button singleUserBtn = new Button("Single User");
         Button multiUserBtn = new Button("Multi User");
@@ -64,12 +70,15 @@ public class UI {
         GridPane.setMargin(multiUserBtn, new Insets(0, 0, 0, 10));
 
         // Clicked event for the "Single User" button
-        singleUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+        singleUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
                 System.out.println("Single User Mode was clicked!");
+
                 // Set the userMode to false (Single User Mode)
-                Main.userMode = false;
+                //Main.userMode = false; no longer needed because of the save strategy
+                saveStrategy = new SingleUserSaveStrategy();
+
                 try {
                     // Add all notes from the project.dat file into the notes LinkedList
                     Storage.loadFromFile();
@@ -77,7 +86,7 @@ public class UI {
                     System.out.println("An error occurred when trying to load data from the project.dat file.");
                     ioException.printStackTrace();
                 }
-                // Generate the program UI (Without the notes)
+                // Generate the program domain.UI (Without the notes)
                 generateProgram();
                 // Show all notes from the notes LinkedList in the Timeline
                 updateTimeline();
@@ -85,12 +94,15 @@ public class UI {
         });
 
         // Clicked event for the "Multi User" button
-        multiUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+        multiUserBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
                 System.out.println("Multi User Mode was clicked!");
-                Main.userMode = true;
-                // Adds all notes from the Database to the Main.notes LinkedList
+
+                //Main.userMode = true; no longer needed because of the save strategy
+                saveStrategy = new MultiUserSaveStrategy();
+
+                // Adds all notes from the Database to the domain.Main.notes LinkedList
                 Storage.loadFromDatabase(Main.projectID);
                 generateProgram();
                 // Show all notes from the notes LinkedList in the Timeline
@@ -136,10 +148,10 @@ public class UI {
         controlsPane.setBackground(new Background(new BackgroundFill(Color.rgb(220, 220, 220), CornerRadii.EMPTY, Insets.EMPTY)));
         programPane.add(controlsPane, 0, 1);
 
-        // Add Note TextArea
+        // Add domain.Note TextArea
         VBox noteTextAreaBox = new VBox();
         noteTextAreaBox.setSpacing(5);
-        Label noteTextAreaLabel = new Label("Note Text:");
+        Label noteTextAreaLabel = new Label("domain.Note Text:");
         noteTextAreaLabel.setFont(new Font("Arial", 14));
         noteTextArea = new TextArea();
         noteTextArea.setPrefWidth(225);
@@ -149,12 +161,12 @@ public class UI {
 
 
 
-        // Prepare for Note Order & Row
+        // Prepare for domain.Note Order & Row
         VBox noteOtherPane = new VBox();
         // Row Gap of 10px
         noteOtherPane.setSpacing(10);
 
-        // Add Note Order
+        // Add domain.Note Order
         VBox orderBox = new VBox();
         orderBox.setSpacing(5);
         Label orderLabel = new Label("Order:");
@@ -164,7 +176,7 @@ public class UI {
         orderField.setFont(new Font("Arial", 14));
         orderBox.getChildren().addAll(orderLabel, orderField);
 
-        // Add Note Row
+        // Add domain.Note Row
         VBox rowBox = new VBox();
         rowBox.setSpacing(5);
         Label rowLabel = new Label("Row:");
@@ -176,9 +188,9 @@ public class UI {
 
 
 
-        // Add the "Add Note" Button
+        // Add the "Add domain.Note" Button
         HBox addNoteBox = new HBox();
-        Button addNoteBtn = new Button("Add Note");
+        Button addNoteBtn = new Button("Add domain.Note");
         addNoteBtn.setFont(new Font("Arial", 14));
         addNoteBtn.setPrefWidth(125);
         addNoteBtn.setPrefHeight(60);
@@ -186,7 +198,7 @@ public class UI {
         addNoteBox.setAlignment(Pos.BASELINE_CENTER);
         //addNoteBox.setBottom(addNoteBtn);
 
-        // Add Note Order and Row to the orderAndRowPane
+        // Add domain.Note Order and Row to the orderAndRowPane
         noteOtherPane.getChildren().addAll(orderBox, rowBox, addNoteBox);
 
 
@@ -212,20 +224,15 @@ public class UI {
         saveOptionsBox.getChildren().addAll(deleteProjectBtn, saveProjectBtn);
 
         // Add the MOUSE_CLICKED event to the save button
-        saveProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+        saveProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                if (Main.userMode) {
-                    Storage.saveToDatabase(Main.projectID);
-                    return;
-                }
-
-                Storage.saveToFile();
+                saveStrategy.save();
             }
         });
 
 
-        // Add note tools (Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
+        // Add note tools (domain.Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
         controlsPane.getChildren().addAll(noteTextAreaBox, noteOtherPane, hregion, saveOptionsBox);
         // top, right, bottom, left
         HBox.setMargin(noteTextAreaBox, new Insets(10, 10, 10, 10));
@@ -233,11 +240,11 @@ public class UI {
         HBox.setHgrow(hregion, Priority.ALWAYS);
 
 
-        // Clicked event for the "Add Note" button
-        addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+        // Clicked event for the "Add domain.Note" button
+        addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                //System.out.println("Add Note Button was Clicked!");
+                //System.out.println("Add domain.Note Button was Clicked!");
 
                 // Make sure the data in the inputs are valid, do nothing if invalid
                 if (!Verifier.verifyNoteData(noteTextArea.getText(), orderField.getText(), rowField.getText())) {
@@ -295,9 +302,9 @@ public class UI {
             int x = Main.notes.get(i).order / 2 - 1;
             int y = Main.notes.get(i).row - 1;
 
-            System.out.println("Note order: " + Main.notes.get(i).order);
+            System.out.println("domain.Note order: " + Main.notes.get(i).order);
             System.out.println("X: " + x);
-            System.out.println("Note row: " + Main.notes.get(i).row);
+            System.out.println("domain.Note row: " + Main.notes.get(i).row);
             System.out.println("Y: " + y);
 
             // Set the position of the note in the grid

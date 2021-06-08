@@ -1,11 +1,13 @@
+package domain;
+
 public class Note {
     public String text;
     public int order;
     public int row;
 
-    // Constructor for the Note class,
+    // Constructor for the domain.Note class,
     // Make sure to check for duplicate notes with the checkDuplicate
-    // method, before adding any notes to the Main.notes linkedlist.
+    // method, before adding any notes to the domain.Main.notes linkedlist.
     public Note(String text, int order, int row) {
         this.text = text;
         this.order = order;

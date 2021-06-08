@@ -1,3 +1,7 @@
+package domain;
+
+import persistence.DB;
+
 import java.io.*;
 import java.util.Base64;
 
@@ -36,7 +40,7 @@ public class Storage {
         int lineNumber = 0;
 
         // Iterate over every line in the project.dat file.
-        // Add every note we find to the Main.notes LinkedList.
+        // Add every note we find to the domain.Main.notes LinkedList.
         while((fileLine=br.readLine()) != null) {
             switch (lineNumber % 3) {
                 case 0:
