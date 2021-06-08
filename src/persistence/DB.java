@@ -1,3 +1,5 @@
+package persistence;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +31,7 @@ public class DB {
 
     /**
      * Tommy's do while loop put in a method so we can use it through out the code and easily clear
-     * the DB.Select statements
+     * the persistence.DB.Select statements
      */
     public static void clearData() {
         do {
