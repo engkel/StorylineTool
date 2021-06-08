@@ -17,6 +17,11 @@ public class Main extends Application {
 
     static LinkedList<Note> notes = new LinkedList<Note>();
 
+    // This ID can be used to more easily add support
+    // for saving multiple projects in the same database.
+    // Currently the projectID is hardcoded to always be 0.
+    static public int projectID = 0;
+
     // Stores the user mode, false = single user (file), true = multi user (database)
     static boolean userMode;
 
@@ -29,7 +34,6 @@ public class Main extends Application {
         // Will generate the start menu
         stage.setTitle("Storyline Tool");
         menuPane = UI.initStartMenu();
-        System.out.println(menuPane.getChildren());
         menuScene = new Scene(menuPane, 1300, 750);
 
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));

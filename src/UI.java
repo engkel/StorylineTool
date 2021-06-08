@@ -90,7 +90,11 @@ public class UI {
             public void handle(MouseEvent e) {
                 System.out.println("Multi User Mode was clicked!");
                 Main.userMode = true;
+                // Adds all notes from the Database to the Main.notes LinkedList
+                Storage.loadFromDatabase(Main.projectID);
                 generateProgram();
+                // Show all notes from the notes LinkedList in the Timeline
+                updateTimeline();
             }
         });
 
@@ -212,7 +216,7 @@ public class UI {
             @Override
             public void handle(MouseEvent e) {
                 if (Main.userMode) {
-                    Storage.saveToDatabase();
+                    Storage.saveToDatabase(Main.projectID);
                     return;
                 }
 
@@ -290,6 +294,11 @@ public class UI {
             // Calculate the note's position in the grid
             int x = Main.notes.get(i).order / 2 - 1;
             int y = Main.notes.get(i).row - 1;
+
+            System.out.println("Note order: " + Main.notes.get(i).order);
+            System.out.println("X: " + x);
+            System.out.println("Note row: " + Main.notes.get(i).row);
+            System.out.println("Y: " + y);
 
             // Set the position of the note in the grid
             timelineGrid.add(noteBox, x, y);

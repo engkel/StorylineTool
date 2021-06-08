@@ -2,6 +2,9 @@ import java.io.*;
 import java.util.Base64;
 
 public class Storage {
+    // A base64 decoder instance, used multiple times throughout the class.
+    private static final Base64.Decoder decoder = Base64.getDecoder();
+
     /**
      * Checks whether the file at the given path exists.
      * @param path Path to the file
@@ -23,7 +26,6 @@ public class Storage {
 
         FileReader saveFileReader = new FileReader("project.dat");
         BufferedReader br = new BufferedReader(saveFileReader);
-        Base64.Decoder decoder = Base64.getDecoder();
 
         String fileLine;
 
@@ -57,7 +59,45 @@ public class Storage {
     /**
      *
      */
-    public static void loadFromDatabase() {
+    public static void loadFromDatabase(int projectID) {
+        // Create the query string
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT fld_text, fld_order, fld_row FROM tbl_timeline WHERE fld_project_id = ");
+        sb.append(projectID);
+        sb.append(";");
+
+        // Query the database for notes
+        DB.selectSQL(sb.toString());
+
+        int lineNumber = 0;
+        String noteText = ""; // Initializing to avoid "Might not have been initialized error"
+        int noteOrder = 0;// Initializing to avoid "Might not have been initialized error"
+
+        do {
+            String data = DB.getData();
+            if (data.equals(DB.NOMOREDATA)) {
+                break;
+            }
+
+            switch (lineNumber % 3) {
+                case 0:
+                    try {
+                        noteText = new String(decoder.decode(data));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid note text was given from the Database, skipping to the next note!");
+                    }
+                    break;
+                case 1:
+                    noteOrder = Integer.parseInt(data);
+                    break;
+                case 2:
+                    // Add the note to the LinkedList of notes
+                    Main.notes.add(new Note(noteText, noteOrder, Integer.parseInt(data)));
+                    break;
+            }
+
+            lineNumber++;
+        } while (true);
 
     }
 
@@ -111,8 +151,29 @@ public class Storage {
 
     /**
      *
+     * @param projectID
      */
-    public static void saveToDatabase() {
+    public static void saveToDatabase(int projectID) {
         System.out.println("Saving to database...");
+
+        //DB.deleteSQL("DELETE * FROM tbl_timeline where fld_project_id = " + projectID);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT () "); // Work in progress here!
+
+
+    }
+
+    public static void tmpPrintAllSelectResults() {
+        System.out.println("Showing the select results:");
+
+        do {
+            String data = DB.getDisplayData();
+            if (data.equals(DB.NOMOREDATA)) {
+                break;
+            } else {
+                System.out.print(data);
+            }
+        } while (true);
     }
 }
