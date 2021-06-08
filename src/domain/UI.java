@@ -76,7 +76,7 @@ public class UI {
                 System.out.println("Single User Mode was clicked!");
 
                 // Set the userMode to false (Single User Mode)
-                //Main.userMode = false; no longer needed because of the save strategy
+                Main.userMode = false;
                 saveStrategy = new SingleUserSaveStrategy();
 
                 try {
@@ -99,7 +99,7 @@ public class UI {
             public void handle(MouseEvent e) {
                 System.out.println("Multi User Mode was clicked!");
 
-                //Main.userMode = true; no longer needed because of the save strategy
+                Main.userMode = true;
                 saveStrategy = new MultiUserSaveStrategy();
 
                 // Adds all notes from the Database to the domain.Main.notes LinkedList
