@@ -190,7 +190,7 @@ public class UI {
 
         // Add the "Add domain.Note" Button
         HBox addNoteBox = new HBox();
-        Button addNoteBtn = new Button("Add domain.Note");
+        Button addNoteBtn = new Button("Add Note");
         addNoteBtn.setFont(new Font("Arial", 14));
         addNoteBtn.setPrefWidth(125);
         addNoteBtn.setPrefHeight(60);
