@@ -1,5 +1,6 @@
 package domain;
 
+import domain.dao.NoteDao;
 import domain.strategy.MultiUserSaveStrategy;
 import domain.strategy.SaveStrategy;
 import domain.strategy.SingleUserSaveStrategy;
@@ -118,8 +119,13 @@ public class UI {
                 // Set MultiUser as our Save Strategy
                 saveStrategy = new MultiUserSaveStrategy();
 
-                // Adds all notes from the Database to the Main.notes LinkedList
-                Storage.loadFromDatabase(Main.projectID);
+                // Get the dao used in the strategy. We first cast the saveStrategy as a MultiUserSaveStrategy,
+                // since we instantiated it as such, then call the getNoteDao method.
+                NoteDao noteDao = ((MultiUserSaveStrategy) saveStrategy).getNoteDao();
+
+                // Use this dao to load notes from database into the Main.notes LinkedList
+                noteDao.loadNotes(Main.projectID);
+
                 generateProgram();
                 // Show all notes from the notes LinkedList in the Timeline
                 updateTimeline();
