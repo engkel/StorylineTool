@@ -8,6 +8,8 @@ import java.util.Base64;
 public class Storage {
     // A base64 decoder instance, used multiple times throughout the class.
     private static final Base64.Decoder decoder = Base64.getDecoder();
+    // A base64 encoder instance, used multiple times throughout the class.
+    private static final Base64.Encoder encoder = Base64.getEncoder();
 
     /**
      * Checks whether the file at the given path exists.
@@ -20,7 +22,8 @@ public class Storage {
     }
 
     /**
-     *
+     *  This method loads all the notes from the project.dat file,
+     *  and adds them all to the Main.notes LinkedList of notes.
      */
     public static void loadFromFile() throws IOException {
         // Stop this function if there is no save file.
@@ -61,7 +64,9 @@ public class Storage {
     }
 
     /**
-     *
+     * This method loads all the notes from the tbl_timeline table,
+     * and adds them all to the Main.notes LinkedList of notes.
+     * @param projectID - The project ID to get the notes from. Currently all notes are hardcoded to use project ID 0.
      */
     public static void loadFromDatabase(int projectID) {
         // Create the query string
@@ -106,10 +111,13 @@ public class Storage {
     }
 
     /**
-     *
+     *  This method will store all the notes from the Main.notes LinkedList
+     *  into the project.dat file. The note text is saved as base64.
+     *  One line is used for each piece of data. Text, order and row,
+     *  this is repeated for each note in the LinkedList.
      */
     public static void saveToFile() {
-        // Make sure the project.dat file is created
+        // Make sure the project.dat file exists.
         try {
             File saveFile = new File("project.dat");
             if (saveFile.createNewFile()) {
@@ -124,9 +132,9 @@ public class Storage {
 
         // Create a new StringBuilder to craft the save file.
         StringBuilder data = new StringBuilder();
-        Base64.Encoder encoder = Base64.getEncoder();
 
         boolean addedFirstNote = false;
+        // Add the note data to the StringBuilder, which will all be written to the file later.
         for (Note n : Main.notes) {
             // Add a newline after the row number from the previous note
             if (addedFirstNote) {
@@ -140,7 +148,7 @@ public class Storage {
             addedFirstNote = true;
         }
 
-        // Write the project data to the project.dat file.
+        // Try to write the project data to the project.dat file.
         try {
             FileWriter saveFileWriter = new FileWriter("project.dat");
             saveFileWriter.write(data.toString());
@@ -154,30 +162,43 @@ public class Storage {
     }
 
     /**
-     *
-     * @param projectID
+     *  This method will save the notes from the Main.notes LinkedList,
+     *  into the tbl_timeline table. Before inserting the data, the previous
+     *  data for the given project ID is removed, to remove old data.
+     * @param projectID - The project ID to get the notes from. Currently all notes are hardcoded to use project ID 0.
      */
     public static void saveToDatabase(int projectID) {
         System.out.println("Saving to database...");
 
-        //DB.deleteSQL("DELETE * FROM tbl_timeline where fld_project_id = " + projectID);
+        DB.deleteSQL("DELETE FROM storylineTool.dbo.tbl_timeline where fld_project_id = " + projectID);
+
+        // This boolean help keep track of if we already added any rows.
+        // The reason for this is to add commas after each row to add.
+        boolean addedFirstRow = false;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("INSERT () "); // Work in progress here!
+        sb.append("INSERT INTO storylineTool.dbo.tbl_timeline (fld_project_id, fld_text, fld_row, fld_order) VALUES "); // Work in progress here!
 
-
-    }
-
-    public static void tmpPrintAllSelectResults() {
-        System.out.println("Showing the select results:");
-
-        do {
-            String data = DB.getDisplayData();
-            if (data.equals(DB.NOMOREDATA)) {
-                break;
+        for (Note n : Main.notes) {
+            // Add a comma if this is NOT the first row to be inserted.
+            if (addedFirstRow) {
+                sb.append(", (");
             } else {
-                System.out.print(data);
+                sb.append('(');
+                addedFirstRow = true;
             }
-        } while (true);
+            sb.append(projectID);
+            sb.append(", '");
+            // We store the note text as base64 (To avoid problems with certain characters)
+            sb.append(encoder.encodeToString(n.text.getBytes()));
+            sb.append("', ");
+            sb.append(n.row);
+            sb.append(", ");
+            sb.append(n.order);
+            sb.append(')');
+        }
+
+        // Insert the data to the table!
+        DB.insertSQL(sb.toString());
     }
 }

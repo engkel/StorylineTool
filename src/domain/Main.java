@@ -12,10 +12,17 @@ public class Main extends Application {
         launch(args);
     }
 
+    // Declare our menuPane, menuScene and primaryStage here,
+    // so we can access them throughout the whole project.
+    // We update the variables once we have the
+    // instances to reference later in the program.
     static GridPane menuPane;
     static Scene menuScene;
     static Stage primaryStage;
 
+    // Our notes LinkedList. This will store all the notes currently in use.
+    // Removing all notes from timelineGrid and a call to
+    // UI.updateTimeline() is necessary to update the UI.
     static LinkedList<Note> notes = new LinkedList<Note>();
 
     // This ID can be used to more easily add support

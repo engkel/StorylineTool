@@ -17,13 +17,24 @@ import javafx.scene.text.Font;
 import java.io.IOException;
 
 public class UI {
-    public static GridPane timelineGrid = new GridPane();
+    // Declare out timeline GridPane, so it can be accessed throughout the class.
+    private static GridPane timelineGrid = new GridPane();
 
+    // Declare our noteTextArea, orderField and rowField so they
+    // can be accessed throughout the whole scope of the UI class.
     static private TextArea noteTextArea;
     static private TextField orderField;
     static private TextField rowField;
+
+    // Declare our SaveStrategy so it can be accessed throughout the class
     private static SaveStrategy saveStrategy;
 
+    /**
+     *  This method will generate a GridPane for the start menu.
+     *  This includes the title and the two buttons. As well as
+     *  adding MOUSE_CLICKED events to the buttons.
+     * @return - Gridpane, returns the gridpane for the start menu.
+     */
     public static GridPane initStartMenu() {
         GridPane menuPane = new GridPane();
 
@@ -75,8 +86,10 @@ public class UI {
             public void handle(MouseEvent e) {
                 System.out.println("Single User Mode was clicked!");
 
+                // Update the userMode to store that we are using Single User Mode.
                 // Set the userMode to false (Single User Mode)
                 Main.userMode = false;
+                // Set MultiUser as our Save Strategy
                 saveStrategy = new SingleUserSaveStrategy();
 
                 try {
@@ -99,7 +112,10 @@ public class UI {
             public void handle(MouseEvent e) {
                 System.out.println("Multi User Mode was clicked!");
 
+                // Update the userMode to store that we are using Multi User Mode.
+                // Set the userMode to true (Multi User Mode)
                 Main.userMode = true;
+                // Set MultiUser as our Save Strategy
                 saveStrategy = new MultiUserSaveStrategy();
 
                 // Adds all notes from the Database to the domain.Main.notes LinkedList
@@ -113,6 +129,12 @@ public class UI {
         return menuPane;
     }
 
+    /**
+     *  This method will generate the whole UI for the main program.
+     *  It will not add any notes to the timeline, but it will
+     *  make the program ready. Notes can be added with updateTimeline
+     *  once this method has been run.
+     */
     public static void generateProgram() {
         GridPane programPane = new GridPane();
 
@@ -273,12 +295,18 @@ public class UI {
             }
         });
 
-
+        // Change the scene to show the recently made programPane
         System.out.println("Changing scene now!");
         Main.menuScene = new Scene(programPane, 1300, 750);
         Main.primaryStage.setScene(Main.menuScene);
     }
 
+    /**
+     *  This method will add all the notes from the Main.notes
+     *  LinkedList to the timeline GridPane. It is necessary to
+     *  remove all notes from the timeline GridPane before
+     *  calling this method!
+     */
     public static void updateTimeline() {
 
         for(int i = 0; i < Main.notes.size(); i++) {
@@ -301,11 +329,6 @@ public class UI {
             // Calculate the note's position in the grid
             int x = Main.notes.get(i).order / 2 - 1;
             int y = Main.notes.get(i).row - 1;
-
-            System.out.println("domain.Note order: " + Main.notes.get(i).order);
-            System.out.println("X: " + x);
-            System.out.println("domain.Note row: " + Main.notes.get(i).row);
-            System.out.println("Y: " + y);
 
             // Set the position of the note in the grid
             timelineGrid.add(noteBox, x, y);
