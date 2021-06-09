@@ -48,7 +48,7 @@ public class UI {
         menuPane.getColumnConstraints().addAll(columnWidth, columnWidth);
         menuPane.getRowConstraints().addAll(rowHeight, rowHeight);
 
-        // Declare and instantiate all domain.UI elements
+        // Declare and instantiate all UI elements
         Label title = new Label("Storyline Tool");
         Button singleUserBtn = new Button("Single User");
         Button multiUserBtn = new Button("Multi User");
@@ -99,7 +99,7 @@ public class UI {
                     System.out.println("An error occurred when trying to load data from the project.dat file.");
                     ioException.printStackTrace();
                 }
-                // Generate the program domain.UI (Without the notes)
+                // Generate the program UI (Without the notes)
                 generateProgram();
                 // Show all notes from the notes LinkedList in the Timeline
                 updateTimeline();
@@ -118,7 +118,7 @@ public class UI {
                 // Set MultiUser as our Save Strategy
                 saveStrategy = new MultiUserSaveStrategy();
 
-                // Adds all notes from the Database to the domain.Main.notes LinkedList
+                // Adds all notes from the Database to the Main.notes LinkedList
                 Storage.loadFromDatabase(Main.projectID);
                 generateProgram();
                 // Show all notes from the notes LinkedList in the Timeline
@@ -170,10 +170,10 @@ public class UI {
         controlsPane.setBackground(new Background(new BackgroundFill(Color.rgb(220, 220, 220), CornerRadii.EMPTY, Insets.EMPTY)));
         programPane.add(controlsPane, 0, 1);
 
-        // Add domain.Note TextArea
+        // Add Note TextArea
         VBox noteTextAreaBox = new VBox();
         noteTextAreaBox.setSpacing(5);
-        Label noteTextAreaLabel = new Label("domain.Note Text:");
+        Label noteTextAreaLabel = new Label("Note Text:");
         noteTextAreaLabel.setFont(new Font("Arial", 14));
         noteTextArea = new TextArea();
         noteTextArea.setPrefWidth(225);
@@ -183,12 +183,12 @@ public class UI {
 
 
 
-        // Prepare for domain.Note Order & Row
+        // Prepare for Note Order & Row
         VBox noteOtherPane = new VBox();
         // Row Gap of 10px
         noteOtherPane.setSpacing(10);
 
-        // Add domain.Note Order
+        // Add Note Order
         VBox orderBox = new VBox();
         orderBox.setSpacing(5);
         Label orderLabel = new Label("Order:");
@@ -198,7 +198,7 @@ public class UI {
         orderField.setFont(new Font("Arial", 14));
         orderBox.getChildren().addAll(orderLabel, orderField);
 
-        // Add domain.Note Row
+        // Add Note Row
         VBox rowBox = new VBox();
         rowBox.setSpacing(5);
         Label rowLabel = new Label("Row:");
@@ -210,7 +210,7 @@ public class UI {
 
 
 
-        // Add the "Add domain.Note" Button
+        // Add the "Add Note" Button
         HBox addNoteBox = new HBox();
         Button addNoteBtn = new Button("Add Note");
         addNoteBtn.setFont(new Font("Arial", 14));
@@ -220,7 +220,7 @@ public class UI {
         addNoteBox.setAlignment(Pos.BASELINE_CENTER);
         //addNoteBox.setBottom(addNoteBtn);
 
-        // Add domain.Note Order and Row to the orderAndRowPane
+        // Add Note Order and Row to the orderAndRowPane
         noteOtherPane.getChildren().addAll(orderBox, rowBox, addNoteBox);
 
 
@@ -254,7 +254,7 @@ public class UI {
         });
 
 
-        // Add note tools (domain.Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
+        // Add note tools (Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
         controlsPane.getChildren().addAll(noteTextAreaBox, noteOtherPane, hregion, saveOptionsBox);
         // top, right, bottom, left
         HBox.setMargin(noteTextAreaBox, new Insets(10, 10, 10, 10));
@@ -262,11 +262,11 @@ public class UI {
         HBox.setHgrow(hregion, Priority.ALWAYS);
 
 
-        // Clicked event for the "Add domain.Note" button
+        // Clicked event for the "Add Note" button
         addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                //System.out.println("Add domain.Note Button was Clicked!");
+                //System.out.println("Add Note Button was Clicked!");
 
                 // Make sure the data in the inputs are valid, do nothing if invalid
                 if (!Verifier.verifyNoteData(noteTextArea.getText(), orderField.getText(), rowField.getText())) {
