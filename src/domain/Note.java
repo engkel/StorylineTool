@@ -21,7 +21,7 @@ public class Note {
      * @param row the row to check
      * @return true = duplicate (Another note already exists), false = not a duplicate.
      */
-    static boolean checkDuplicate(int order, int row) {
+    public static boolean checkDuplicate(int order, int row) {
         for (int i = 0; i < Main.notes.size(); i++) {
             if (Main.notes.get(i).order != order) {
                 continue;
@@ -41,7 +41,7 @@ public class Note {
      * @param order The order given by the user, this will often not be the final order
      * @param row The row given by the user
      */
-    static void addNoteToLinkedList(String text, int order, int row) {
+    public static void addNoteToLinkedList(String text, int order, int row) {
         if (Main.notes.size() == 0) {
             Main.notes.add(new Note(text, 2, row));
             return;
@@ -96,11 +96,6 @@ public class Note {
             }
         }
 
-        // Just in case (I haven't actually checked if it's possible)
-        if (order % 2 == 0) {
-            System.out.println("THIS SHOULD NEVER HAPPEN, INVESTIGATE NOW! :)");
-        }
-
         // Change the uneven number to be an even number 3 -> 4
         Main.notes.get(addedIndex).order++;
 
@@ -110,6 +105,58 @@ public class Note {
         // before that point already have a correct value.
         for (int i = addedIndex + 1; i < Main.notes.size(); i++) {
             Main.notes.get(i).order += 2;
+        }
+    }
+
+    /**
+     * This method will remove a note at a given order and row from
+     * the Main.notes LinkedList. This will not update the UI.
+     * @param order The order of the note to be removed.
+     * @param row The row of the note to be removed.
+     */
+    public static void removeNoteFromLinkedList(int order, int row) {
+        for (int i = 0; i < Main.notes.size(); i++) {
+            if (Main.notes.get(i).order == order && Main.notes.get(i).row == row) {
+
+                // 1. Check if there are other notes with the same order,
+                // make sure not to go below index 0 or above the length of the LinkedList!
+                //   - Yes, other notes with same order    - Just remove the note and break
+                //   - No, no other notes with same order  - Remove 2 from the order of all notes to the right.
+
+                // Store whether there are other notes in the same order
+                boolean sameOrder = false;
+
+                // Check if there is a note before this current note
+                if (i != 0) {
+                    // True = previous note has same order
+                    // False = previous note does not have the same order
+                    sameOrder = Main.notes.get(i-1).order == Main.notes.get(i).order;
+                }
+
+                // Check if we already know if there is a note with the same order,
+                // and that there is a note after this one
+                if (!sameOrder && Main.notes.size() > (i + 1)) {
+                    sameOrder = Main.notes.get(i+1).order == Main.notes.get(i).order;
+                }
+
+                // If there are other notes with the same order,
+                // then just delete this note and do nothing more.
+                if (sameOrder) {
+                    Main.notes.remove(i);
+                    break;
+                }
+
+                // Fix the order values so they all have the correct value (Always increase by 2 in order)
+                // We will start from the removed item, since all elements
+                // before that point already have a correct value.
+                for (int x = i + 1; x < Main.notes.size(); x++) {
+                    // Decrease by two, since
+                    Main.notes.get(x).order -= 2;
+                }
+
+                // Remove the note after updating the order of other notes.
+                Main.notes.remove(i);
+            }
         }
     }
 }

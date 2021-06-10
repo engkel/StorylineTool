@@ -170,11 +170,17 @@ public class Storage {
     public static void saveToDatabase(int projectID) {
         System.out.println("Saving to database...");
 
-        DB.deleteSQL("DELETE FROM storylineTool.dbo.tbl_timeline where fld_project_id = " + projectID);
+        // Delete the old content from the database
+        deleteProjectDBContent(projectID);
 
         // This boolean help keep track of if we already added any rows.
         // The reason for this is to add commas after each row to add.
         boolean addedFirstRow = false;
+
+        // Stop the function here, as there is no notes to be inserted into the database.
+        if (Main.notes.size() == 0) {
+            return;
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO storylineTool.dbo.tbl_timeline (fld_project_id, fld_text, fld_row, fld_order) VALUES "); // Work in progress here!
@@ -200,5 +206,54 @@ public class Storage {
 
         // Insert the data to the table!
         DB.insertSQL(sb.toString());
+    }
+
+    /**
+     * This method will remove all the data in the project.dat file.
+     * In other words, it will delete the project.
+     */
+    public static void deleteFileContent() {
+        System.out.println("Deleting the project data in file!");
+        // Make sure the project.dat file exists.
+        try {
+            File saveFile = new File("project.dat");
+            if (saveFile.createNewFile()) {
+                System.out.println("The project.dat did not exist, we will create it again.");
+            } else {
+                System.out.println("Using the already existing project.dat file.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while delete the project data.");
+            e.printStackTrace();
+        }
+
+        // Try to write the empty string to the project.dat file.
+        // This will get rid of all the previous data, if any.
+        try {
+            FileWriter saveFileWriter = new FileWriter("project.dat");
+            saveFileWriter.write("");
+            saveFileWriter.close();
+            System.out.println("Successfully deleted all data in the project.dat file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while clearing the project.dat file.");
+            e.printStackTrace();
+        }
+
+        // Clear the Main.notes LinkedList since
+        // the user deleted the project.
+        Main.notes.clear();
+
+        // Update the UI, which in this case
+        // makes all the notes disappear.
+        UI.updateTimeline();
+    }
+
+    /**
+     * This method will remove all the data, for the given project ID,
+     * in the timeline table in the database. In other words, it will
+     * delete the project currently being worked on.
+     */
+    public static void deleteProjectDBContent(int projectID) {
+        DB.deleteSQL("DELETE FROM storylineTool.dbo.tbl_timeline where fld_project_id = " + projectID);
     }
 }

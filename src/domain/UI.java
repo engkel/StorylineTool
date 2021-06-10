@@ -1,9 +1,7 @@
 package domain;
 
 import domain.dao.NoteDao;
-import domain.strategy.MultiUserSaveStrategy;
-import domain.strategy.SaveStrategy;
-import domain.strategy.SingleUserSaveStrategy;
+import domain.strategy.*;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -11,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -27,8 +26,9 @@ public class UI {
     static private TextField orderField;
     static private TextField rowField;
 
-    // Declare our SaveStrategy so it can be accessed throughout the class
+    // Declare our SaveStrategy and DeleteStrategy so it can be accessed throughout the class
     private static SaveStrategy saveStrategy;
+    private static DeleteStrategy deleteStrategy;
 
     /**
      *  This method will generate a GridPane for the start menu.
@@ -90,8 +90,11 @@ public class UI {
                 // Update the userMode to store that we are using Single User Mode.
                 // Set the userMode to false (Single User Mode)
                 Main.userMode = false;
-                // Set MultiUser as our Save Strategy
+                // Set SingleUser as our Save Strategy
                 saveStrategy = new SingleUserSaveStrategy();
+                // Set SingleUser as our Delete Strategy
+                deleteStrategy = new SingleUserDeleteStrategy();
+
 
                 try {
                     // Add all notes from the project.dat file into the notes LinkedList
@@ -118,6 +121,8 @@ public class UI {
                 Main.userMode = true;
                 // Set MultiUser as our Save Strategy
                 saveStrategy = new MultiUserSaveStrategy();
+                // Set SingleUser as our Delete Strategy
+                deleteStrategy = new MultiUserDeleteStrategy();
 
                 // Get the dao used in the strategy. We first cast the saveStrategy as a MultiUserSaveStrategy,
                 // since we instantiated it as such, then call the getNoteDao method.
@@ -259,6 +264,15 @@ public class UI {
             }
         });
 
+        // Add the MOUSE_CLICKED event to the delete project button
+        deleteProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                // Remove all the data in the project file
+                deleteStrategy.delete();
+            }
+        });
+
 
         // Add note tools (Note Text, Order, Row and Add Button) and saving tools (Delete Project and Save Project) to the ControlPane
         controlsPane.getChildren().addAll(noteTextAreaBox, noteOtherPane, hregion, saveOptionsBox);
@@ -296,7 +310,6 @@ public class UI {
                 Note.addNoteToLinkedList(noteText, noteOrder, noteRow);
 
                 // Update the timeline to show the updated data.
-                timelineGrid.getChildren().removeAll(timelineGrid.getChildren());
                 UI.updateTimeline(); // Update the timeline to show the new note
             }
         });
@@ -308,13 +321,20 @@ public class UI {
     }
 
     /**
-     *  This method will add all the notes from the Main.notes
-     *  LinkedList to the timeline GridPane. It is necessary to
-     *  remove all notes from the timeline GridPane before
-     *  calling this method!
+     *  This method will update the timeline, by removing all
+     *  notes on the timeline, and adding all notes from the
+     *  Main.notes LinkedList to the timeline GridPane.
      */
     public static void updateTimeline() {
 
+        // Only remove all notes in the UI if there are any.
+        if (timelineGrid.getChildren().size() > 0) {
+            // Remove all the previous notes from the timeline gridpane.
+            timelineGrid.getChildren().removeAll(timelineGrid.getChildren());
+        }
+
+        // Iterate over each note in the Main.notes LinkedList,
+        // and add them one by one.
         for(int i = 0; i < Main.notes.size(); i++) {
             // Create the note element for JavaFX
             VBox noteBox = new VBox();
@@ -335,6 +355,18 @@ public class UI {
             // Calculate the note's position in the grid
             int x = Main.notes.get(i).order / 2 - 1;
             int y = Main.notes.get(i).row - 1;
+
+            // Add the Right-Click event, which will delete the note.
+            int finalI = i;
+            noteBox.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                        Note.removeNoteFromLinkedList(Main.notes.get(finalI).order, Main.notes.get(finalI).row);
+                        UI.updateTimeline();
+                    }
+                }
+            });
 
             // Set the position of the note in the grid
             timelineGrid.add(noteBox, x, y);

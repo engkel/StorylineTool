@@ -23,7 +23,7 @@ public class Main extends Application {
     // Our notes LinkedList. This will store all the notes currently in use.
     // Removing all notes from timelineGrid and a call to
     // UI.updateTimeline() is necessary to update the UI.
-    static LinkedList<Note> notes = new LinkedList<Note>();
+    static public LinkedList<Note> notes = new LinkedList<Note>();
 
     // This ID can be used to more easily add support
     // for saving multiple projects in the same database.
