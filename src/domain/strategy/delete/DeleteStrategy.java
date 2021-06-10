@@ -1,4 +1,4 @@
-package domain.strategy;
+package domain.strategy.delete;
 
 /**
  * The interface of the delete strategy pattern. Since there are two ways

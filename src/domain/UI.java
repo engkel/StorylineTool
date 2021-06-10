@@ -1,7 +1,12 @@
 package domain;
 
 import domain.dao.NoteDao;
-import domain.strategy.*;
+import domain.strategy.delete.DeleteStrategy;
+import domain.strategy.delete.MultiUserDeleteStrategy;
+import domain.strategy.delete.SingleUserDeleteStrategy;
+import domain.strategy.save.MultiUserSaveStrategy;
+import domain.strategy.save.SaveStrategy;
+import domain.strategy.save.SingleUserSaveStrategy;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -127,7 +132,6 @@ public class UI {
                 // Get the dao used in the strategy. We first cast the saveStrategy as a MultiUserSaveStrategy,
                 // since we instantiated it as such, then call the getNoteDao method.
                 NoteDao noteDao = ((MultiUserSaveStrategy) saveStrategy).getNoteDao();
-
                 // Use this dao to load notes from database into the Main.notes LinkedList
                 noteDao.loadNotes(Main.projectID);
 

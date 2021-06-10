@@ -1,4 +1,4 @@
-package domain.strategy;
+package domain.strategy.save;
 
 import domain.Storage;
 

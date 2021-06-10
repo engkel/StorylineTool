@@ -1,4 +1,4 @@
-package domain.strategy;
+package domain.strategy.delete;
 
 import domain.Storage;
 

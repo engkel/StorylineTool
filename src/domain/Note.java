@@ -159,4 +159,16 @@ public class Note {
             }
         }
     }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public String getText() {
+        return text;
+    }
 }

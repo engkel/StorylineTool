@@ -1,7 +1,6 @@
-package domain.strategy;
+package domain.strategy.save;
 
 import domain.Main;
-import domain.Storage;
 import domain.dao.NoteDao;
 import domain.dao.NoteDaoImpl;
 
@@ -11,7 +10,11 @@ import domain.dao.NoteDaoImpl;
  * the database.
  */
 public class MultiUserSaveStrategy implements SaveStrategy {
-    private NoteDao noteDao = new NoteDaoImpl();
+    private NoteDao noteDao;
+
+    public MultiUserSaveStrategy() {
+        this.noteDao = new NoteDaoImpl();
+    }
 
     @Override
     public void save() {

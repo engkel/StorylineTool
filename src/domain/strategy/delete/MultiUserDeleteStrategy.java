@@ -1,11 +1,8 @@
-package domain.strategy;
+package domain.strategy.delete;
 
 import domain.Main;
-import domain.Note;
 import domain.Storage;
 import domain.UI;
-
-import java.util.LinkedList;
 
 public class MultiUserDeleteStrategy implements DeleteStrategy {
     @Override

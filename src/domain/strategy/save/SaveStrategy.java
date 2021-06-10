@@ -1,4 +1,4 @@
-package domain.strategy;
+package domain.strategy.save;
 
 /**
  * The interface of the save strategy pattern. Since there are two ways
