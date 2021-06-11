@@ -337,15 +337,25 @@ public class UI {
             timelineGrid.getChildren().removeAll(timelineGrid.getChildren());
         }
 
+        // Store the amount of rows, this will be updated as we add each note.
+        // The purpose of this of this, is to be able to add the amount of rowconstraints
+        // - needed, for the UI to always look like it is supposed to.
+        int rowCount = 0;
+
         // Iterate over each note in the Main.notes LinkedList,
         // and add them one by one.
         for(int i = 0; i < Main.notes.size(); i++) {
+            if (rowCount < Main.notes.get(i).row) {
+                rowCount = Main.notes.get(i).row;
+            }
+
             // Create the note element for JavaFX
             VBox noteBox = new VBox();
-            noteBox.setMinSize(150, 75);
-            noteBox.setPrefSize(150, 75);
-            noteBox.setMaxSize(150, 75);
+            noteBox.setMinSize(160, 100);
+            noteBox.setPrefSize(160, 100);
+            noteBox.setMaxSize(160, 100);
             Label noteText = new Label(Main.notes.get(i).text);
+            noteText.setWrapText(true);
             Region spacer = new Region();
             Label noteInfo = new Label("Order: " + Main.notes.get(i).order + ", Row: " + Main.notes.get(i).row);
 
@@ -374,6 +384,35 @@ public class UI {
 
             // Set the position of the note in the grid
             timelineGrid.add(noteBox, x, y);
+        }
+
+        // Now we want to add rowconstraints to every row of notes we have,
+        // we do this in case we have an empty row between two other rows.
+        // If that was the case before and we did not have any rowconstraints,
+        // then the UI would not look like we want it to look like.
+        // Store the current amount of rowconstraints we currently have
+        int currentRowConstraints = timelineGrid.getRowConstraints().size();
+
+        // We have more rows than we have rowconstraints.
+        // We will add the needed rowconstraints.
+        // The result will be that we have the same amount of rows and rowconstraints
+        if (currentRowConstraints < rowCount) {
+            for (int i = 0; i < rowCount-currentRowConstraints; i++) {
+                RowConstraints rowConstraint = new RowConstraints();
+                rowConstraint.setMinHeight(100);
+                rowConstraint.setPrefHeight(100);
+                rowConstraint.setMaxHeight(100);
+                timelineGrid.getRowConstraints().add(rowConstraint);
+            }
+        }
+
+        // We have fewer rows than we have rowconstraints.
+        // We will remove the rowconstraints that we do not need
+        // The result will be that we have the same amount of rows and rowconstraints
+        if (currentRowConstraints > rowCount) {
+            for (int i = 1; i <= currentRowConstraints-rowCount; i++) {
+                timelineGrid.getRowConstraints().remove(currentRowConstraints-i);
+            }
         }
     }
 }
