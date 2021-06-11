@@ -4,6 +4,8 @@ import domain.dao.NoteDao;
 import domain.strategy.delete.DeleteStrategy;
 import domain.strategy.delete.MultiUserDeleteStrategy;
 import domain.strategy.delete.SingleUserDeleteStrategy;
+import domain.strategy.export.ExportProjectStrategy;
+import domain.strategy.export.ExportStrategy;
 import domain.strategy.save.MultiUserSaveStrategy;
 import domain.strategy.save.SaveStrategy;
 import domain.strategy.save.SingleUserSaveStrategy;
@@ -34,6 +36,7 @@ public class UI {
     // Declare our SaveStrategy and DeleteStrategy so it can be accessed throughout the class
     private static SaveStrategy saveStrategy;
     private static DeleteStrategy deleteStrategy;
+    private static ExportStrategy exportStrategy = new ExportProjectStrategy();
 
     /**
      *  This method will generate a GridPane for the start menu.
@@ -141,6 +144,7 @@ public class UI {
             }
         });
 
+        // Return the generated gridpane for the menu
         return menuPane;
     }
 
@@ -242,29 +246,43 @@ public class UI {
         // Region testing
         Region hregion = new Region();
 
-
-        // Add Delete Project and Save Project Buttons
+        // Declare and initialize the VBox used to contain the below three buttons.
         VBox saveOptionsBox = new VBox();
         saveOptionsBox.setAlignment(Pos.BOTTOM_CENTER);
+
+        // Add the Export button
+        Button exportProjectBtn = new Button("Export Project");
+        exportProjectBtn.setFont(new Font("Arial", 14));
+        exportProjectBtn.setPrefHeight(24);
+        exportProjectBtn.setPrefWidth(130);
+        exportProjectBtn.setBackground(new Background(new BackgroundFill(Color.rgb(250, 140, 60), CornerRadii.EMPTY, Insets.EMPTY)));
+        VBox.setMargin(exportProjectBtn, new Insets(10, 10, 5, 10));
+
+        // Add Delete Project button
         Button deleteProjectBtn = new Button("Delete Project");
         deleteProjectBtn.setFont(new Font("Arial", 14));
         deleteProjectBtn.setPrefHeight(24);
         deleteProjectBtn.setPrefWidth(130);
         deleteProjectBtn.setBackground(new Background(new BackgroundFill(Color.rgb(250, 110, 110), CornerRadii.EMPTY, Insets.EMPTY)));
         VBox.setMargin(deleteProjectBtn, new Insets(10, 10, 5, 10));
+
+        //  Add the Save Project Button
         Button saveProjectBtn = new Button("Save to " + (Main.userMode ? "Database" : "File"));
         saveProjectBtn.setFont(new Font("Arial", 14));
         saveProjectBtn.setPrefHeight(70);
         saveProjectBtn.setPrefWidth(130);
         saveProjectBtn.setBackground(new Background(new BackgroundFill(Color.rgb(90, 200, 90), CornerRadii.EMPTY, Insets.EMPTY)));
         VBox.setMargin(saveProjectBtn, new Insets(0, 10, 10, 10));
-        saveOptionsBox.getChildren().addAll(deleteProjectBtn, saveProjectBtn);
 
-        // Add the MOUSE_CLICKED event to the save button
-        saveProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        // Add the three buttons to the VBox
+        saveOptionsBox.getChildren().addAll(exportProjectBtn, deleteProjectBtn, saveProjectBtn);
+
+        // Add the MOUSE_CLICKED event to the export project button
+        exportProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                saveStrategy.save();
+                // Remove all the data in the project file
+                exportStrategy.export();
             }
         });
 
@@ -274,6 +292,14 @@ public class UI {
             public void handle(MouseEvent e) {
                 // Remove all the data in the project file
                 deleteStrategy.delete();
+            }
+        });
+
+        // Add the MOUSE_CLICKED event to the save button
+        saveProjectBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                saveStrategy.save();
             }
         });
 

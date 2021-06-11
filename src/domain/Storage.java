@@ -158,7 +158,6 @@ public class Storage {
             System.out.println("An error occurred while writing to the project.dat file.");
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -255,5 +254,63 @@ public class Storage {
      */
     public static void deleteProjectDBContent(int projectID) {
         DB.deleteSQL("DELETE FROM storylineTool.dbo.tbl_timeline where fld_project_id = " + projectID);
+    }
+
+    /**
+     * This method will export all the data in a readable format to a file.
+     * The difference between saveToFile() and exportToFile(), is that the
+     * saveToFile() is meant to store the project data for the program to
+     * read and write to, where the text is stored in base64. Whereas the
+     * exportToFile() is storing the data in a readable format with
+     * indentation based on the row.
+     */
+    public static void exportToFile() {
+        // Make sure the project.dat file exists.
+        try {
+            File saveFile = new File("project_export.txt");
+            if (saveFile.createNewFile()) {
+                System.out.println("The project_export.txt file was successfully created.");
+            } else {
+                System.out.println("The project_export.txt already exists, we will overwrite the data.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while exporting the project.");
+            e.printStackTrace();
+        }
+
+        // Create a new StringBuilder to craft the export data.
+        StringBuilder data = new StringBuilder();
+
+        boolean addedFirstLine = false;
+        // Add the note data to the StringBuilder, which will all be written to the file later.
+        for (Note n : Main.notes) {
+            // Add a newline after the previous line
+            if (addedFirstLine) {
+                data.append('\n');
+            }
+
+            // Add the tabs before adding the line text
+            for (int i = 1; i < n.row; i++) {
+                data.append('\t');
+            }
+
+            // Add the note text to the current line
+            data.append(n.text);
+
+            // Set addedFirstLine to true so that the program will
+            // add a new line if there are any another notes.
+            addedFirstLine = true;
+        }
+
+        // Try to write the export data to the project_export.txt file.
+        try {
+            FileWriter saveFileWriter = new FileWriter("project_export.txt");
+            saveFileWriter.write(data.toString());
+            saveFileWriter.close();
+            System.out.println("Successfully exported the project to project_export.txt.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while exporting the project to the project_export.txt file.");
+            e.printStackTrace();
+        }
     }
 }
