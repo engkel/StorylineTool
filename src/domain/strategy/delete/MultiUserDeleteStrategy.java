@@ -2,7 +2,6 @@ package domain.strategy.delete;
 
 import domain.Main;
 import domain.Storage;
-import domain.UI;
 
 public class MultiUserDeleteStrategy implements DeleteStrategy {
     @Override
@@ -13,8 +12,5 @@ public class MultiUserDeleteStrategy implements DeleteStrategy {
 
         // Delete all the notes in the notes LinkedList
         Main.notes.clear();
-
-        // Update the UI so show the updated notes LinkedList, with no notes.
-        UI.updateTimeline();
     }
 }

@@ -292,6 +292,10 @@ public class UI {
             public void handle(MouseEvent e) {
                 // Remove all the data in the project file
                 deleteStrategy.delete();
+
+                // Update the UI, which in this case
+                // makes all the notes disappear.
+                updateTimeline();
             }
         });
 
@@ -340,7 +344,7 @@ public class UI {
                 Note.addNoteToLinkedList(noteText, noteOrder, noteRow);
 
                 // Update the timeline to show the updated data.
-                UI.updateTimeline(); // Update the timeline to show the new note
+                updateTimeline(); // Update the timeline to show the new note
             }
         });
 
@@ -403,7 +407,7 @@ public class UI {
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                         Note.removeNoteFromLinkedList(Main.notes.get(finalI).order, Main.notes.get(finalI).row);
-                        UI.updateTimeline();
+                        updateTimeline();
                     }
                 }
             });

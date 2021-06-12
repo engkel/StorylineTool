@@ -241,10 +241,6 @@ public class Storage {
         // Clear the Main.notes LinkedList since
         // the user deleted the project.
         Main.notes.clear();
-
-        // Update the UI, which in this case
-        // makes all the notes disappear.
-        UI.updateTimeline();
     }
 
     /**
