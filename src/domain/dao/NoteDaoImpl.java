@@ -1,6 +1,5 @@
 package domain.dao;
 
-import domain.Main;
 import domain.Storage;
 
 /**

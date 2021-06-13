@@ -1,7 +1,6 @@
 package domain.strategy.delete;
 
 import domain.Main;
-import domain.Storage;
 import domain.dao.NoteDao;
 import domain.dao.NoteDaoImpl;
 
