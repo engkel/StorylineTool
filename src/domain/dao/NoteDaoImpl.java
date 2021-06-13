@@ -16,6 +16,11 @@ public class NoteDaoImpl implements NoteDao{
 
     @Override
     public void loadNotes(int projectID) {
-        Storage.loadFromDatabase(Main.projectID);
+        Storage.loadFromDatabase(projectID);
+    }
+
+    @Override
+    public void deleteNotes(int projectID) {
+        Storage.deleteProjectDBContent(projectID);
     }
 }
