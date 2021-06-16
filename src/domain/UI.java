@@ -318,26 +318,32 @@ public class UI {
             public void handle(MouseEvent e) {
                 //System.out.println("Add Note Button was Clicked!");
 
+                // Store the input fields in their own Strings
+                String noteText = noteTextArea.getText();
+                String noteOrder = orderField.getText();
+                String noteRow = rowField.getText();
+
                 // Make sure the data in the inputs are valid, do nothing if invalid
-                if (!Verifier.verifyNoteData(noteTextArea.getText(), orderField.getText(), rowField.getText())) {
-                    System.out.println("The input data was not valid. An example can be inputting letters into the order or row input.");
+                if (!Verifier.verifyNoteData(noteText, noteOrder, noteRow)) {
+                    System.out.println("The input data was not valid. " +
+                            "An example can be inputting letters into the order or row input.");
                     return;
                 }
 
                 // Store the input data
-                String noteText = noteTextArea.getText();
-                int noteOrder = Integer.parseInt(orderField.getText());
-                int noteRow = Integer.parseInt(rowField.getText());
+                int noteOrderParsed = Integer.parseInt(noteOrder);
+                int noteRowParsed = Integer.parseInt(noteRow);
 
                 // Check if there are any duplicate notes (Same order and row)
                 // Do nothing if there is a duplicate
-                if (Note.checkDuplicate(noteOrder, noteRow)) {
-                    System.out.println("The note was not added. There is already a note at the given order and row.");
+                if (Note.checkDuplicate(noteOrderParsed, noteRowParsed)) {
+                    System.out.println("The note was not added. " +
+                            "There is already a note at the given order and row.");
                     return;
                 }
 
                 // Add the note to the timeline!
-                Note.addNoteToLinkedList(noteText, noteOrder, noteRow);
+                Note.addNoteToLinkedList(noteText, noteOrderParsed, noteRowParsed);
 
                 // Update the timeline to show the updated data.
                 UI.updateTimeline(); // Update the timeline to show the new note
