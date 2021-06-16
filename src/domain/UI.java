@@ -237,7 +237,6 @@ public class UI {
         addNoteBtn.setPrefHeight(60);
         addNoteBox.getChildren().add(addNoteBtn);
         addNoteBox.setAlignment(Pos.BASELINE_CENTER);
-        //addNoteBox.setBottom(addNoteBtn);
 
         // Add Note Order and Row to the orderAndRowPane
         noteOtherPane.getChildren().addAll(orderBox, rowBox, addNoteBox);
@@ -320,8 +319,6 @@ public class UI {
         addNoteBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                //System.out.println("Add Note Button was Clicked!");
-
                 // Store the input fields in their own Strings
                 String noteText = noteTextArea.getText();
                 String noteOrder = orderField.getText();
