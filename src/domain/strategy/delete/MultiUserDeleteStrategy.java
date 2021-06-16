@@ -1,20 +1,23 @@
 package domain.strategy.delete;
 
 import domain.Main;
-import domain.Storage;
-import domain.UI;
+import domain.dao.NoteDao;
+import domain.dao.NoteDaoImpl;
 
 public class MultiUserDeleteStrategy implements DeleteStrategy {
+    private NoteDao noteDao;
+
+    public MultiUserDeleteStrategy() {
+        this.noteDao = new NoteDaoImpl();
+    }
+
     @Override
     public void delete() {
         // This will remove all the data for the given project ID,
         // in the timeline table in the database.
-        Storage.deleteProjectDBContent(Main.projectID);
+        noteDao.deleteNotes(Main.projectID);
 
         // Delete all the notes in the notes LinkedList
         Main.notes.clear();
-
-        // Update the UI so show the updated notes LinkedList, with no notes.
-        UI.updateTimeline();
     }
 }

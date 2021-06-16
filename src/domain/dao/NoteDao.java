@@ -8,4 +8,5 @@ package domain.dao;
 public interface NoteDao {
     void saveNotes(int projectID);
     void loadNotes(int projectID);
+    void deleteNotes(int projectID);
 }
